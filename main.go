@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -10,21 +9,18 @@ import (
 
 func main() {
 	http.HandleFunc("/", myTemplateHandler)
-	fmt.Println(nextWeek().String())
 	log.Print("serving on http://localhost:8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
 
 func myTemplateHandler(w http.ResponseWriter, r *http.Request) {
-	releaseDate := nextWeek()
-	Date := releaseDate.String()
-
+	date := releaseDate()
 	tmpl, _ := template.ParseFiles("./public/index.html")
-	tmpl.Execute(w, Date)
+	tmpl.Execute(w, date)
 }
 
-func nextWeek() time.Time {
+func releaseDate() string {
 	rd := time.Now()
-	return rd.Add(7 * 24 * time.Hour)
-
+	rd = rd.AddDate(0, 0, 7)
+	return rd.Format("02/01/2006")
 }
