@@ -1,28 +1,32 @@
 package main
 
-import "time"
-
-type Voo struct {
-	id       int
-	origem   string
-	destino  string
-	partida  time.Time
-	chegada  time.Time
-	duracao  time.Time
-	poltrona int
-	classe   string
-}
+import (
+	"log"
+	"net/http"
+	"text/template"
+)
 
 type User struct {
-	id        int
-	nome      string
-	sobrenome string
-	cpf       string
-	idade     int
-	premium   bool
-	Voo
+	Nome      string
+	Sobrenome string
+	Email     string
+	Idade     int
 }
 
 func main() {
+	http.HandleFunc("/", userHandler)
+	log.Print("serving on http://localhost:8080")
+	log.Fatal(http.ListenAndServe(":8080", nil))
+}
 
+func userHandler(w http.ResponseWriter, r *http.Request) {
+	// usuario teste:
+	User1 := User{
+		Nome:      "João",
+		Sobrenome: "Silva",
+		Email:     "joao.silva@domain.com",
+		Idade:     29,
+	}
+	tmpl, _ := template.ParseFiles("./public/user.html")
+	tmpl.Execute(w, User1)
 }
